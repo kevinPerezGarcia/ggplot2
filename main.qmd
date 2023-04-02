@@ -9,6 +9,7 @@ editor: visual
 ## Inicialización del proyecto
 
 ### Instalación y carga de paquetes
+
 ```{r}
 paquetes <- c(here,
               ggplot2,
@@ -24,4 +25,3 @@ lapply(paquetes, library, character.only = T)
 ```
 
 # Bar plots
-
