@@ -21,3 +21,4 @@
 
 ## Versión
 * v1.0.0-WORKING
+* v1.0.0-RELEASE
