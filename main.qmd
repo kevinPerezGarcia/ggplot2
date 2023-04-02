@@ -11,9 +11,9 @@ editor: visual
 ### Instalación y carga de paquetes
 
 ```{r}
-paquetes <- c(here,
-              ggplot2,
-              reshape2)
+paquetes <- c("here",
+              "ggplot2",
+              "reshape2")
 
 lapply(paquetes, library, character.only = T)
 ```
@@ -21,7 +21,99 @@ lapply(paquetes, library, character.only = T)
 ### Configuración de rutas
 
 ```{r}
-#
+here_figures <- c("figures")
 ```
 
-# Bar plots
+# Gráfico de barras
+
+Base de datos
+```{r}
+cabbage_exp <- data.frame(Cultivar=c(rep("c39", 3), rep("c52", 3)), 
+                          Date=rep(c("d16", "d20", "d21"),2), 
+                          Weight=c(3.18, 2.80, 2.74, 2.26, 3.11, 1.47), 
+                          sd= c(0.9566144, 0.2788867, 0.9834181, 0.4452215, 0.7908505, 0.2110819), 
+                          n=rep(10,6), 
+                          se=c(0.30250803, 0.08819171, 0.31098410, 0.14079141, 0.25008887, 0.06674995))
+```
+
+```{r}
+str(cabbage_exp)
+cabbage_exp
+```
+* Gráfico
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight)) +
+  geom_bar(stat="identity")
+```
+
+* Cambio de color de las barras
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight)) +
+  geom_bar(stat="identity", fill="plum")
+```
+* Cambio de tema
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight)) +
+  geom_bar(stat="identity", fill="plum") +
+  theme_bw()
+```
+:::{.callout-note}
+[Galeria de extensiones de ggplot2](https://exts.ggplot2.tidyverse.org/gallery/) presenta extensiones para implementar temas en los gráficos generados por la librería ggplot2.
+:::
+
+* Gráfico de barras apiladas coloreadas por condición
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
+  geom_bar(stat="identity") +
+  theme_bw()
+```
+* Añadir texto
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  geom_text(aes(label=Weight), vjust=0.4)
+```
+* Gráfico con barras separadas por condición
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
+  geom_bar(stat="identity", position = "dodge")
+```
+
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
+  geom_bar(stat="identity", position = "dodge") +
+  geom_text(aes(label=Weight), vjust=-0.1, position = position_dodge(0.9), size=3, colour="red")
+```
+* Cambio de paleta de colores
+
+  + R tiene paletas de colores ya preestablecidas (ver presentación).
+  + `library(RcolorBrewer` se dedica exclusivamente a las paletas de colores.
+  
+```{r}
+ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
+  geom_bar(stat="identity", position = "dodge") +
+  scale_fill_brewer(palette = "Set1")
+```
+* Añadir barras de error
+```{r}
+ggplot(data= cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) + 
+  geom_bar(stat="identity", position="dodge") +
+  scale_fill_brewer(palette="Set1") +
+  geom_errorbar(aes(ymin=Weight-se, ymax=Weight+se), width=0.2, position=position_dodge(0.9))
+```
+* Cambiar títulos de los ejes
+```{r}
+ggplot(data= cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) + 
+  geom_bar(stat="identity", position="dodge") +
+  scale_fill_brewer(palette="Set1") +
+  geom_errorbar(aes(ymin=Weight-se, ymax=Weight+se), width=0.2, position=position_dodge(0.9)) +
+  labs(x="Day", y="Weight (lb)", fill="Experiment")
+```
+* Guardar un gráfico
+```{r}
+ggsave("figures/bar_graph.png", device = png)
+```
+
+
+
