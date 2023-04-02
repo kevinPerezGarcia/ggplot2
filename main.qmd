@@ -1,0 +1,27 @@
+---
+title: "ggplot2"
+author: "Kevin Perez Garcia"
+format: html
+toc: TRUE
+editor: visual
+---
+
+## Inicialización del proyecto
+
+### Instalación y carga de paquetes
+```{r}
+paquetes <- c(here,
+              ggplot2,
+              reshape2)
+
+lapply(paquetes, library, character.only = T)
+```
+
+### Configuración de rutas
+
+```{r}
+#
+```
+
+# Bar plots
+
