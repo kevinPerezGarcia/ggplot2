@@ -367,3 +367,87 @@ ggplot(data= antibodies, aes(x= VJ.identity, fill=V.GENE, y= ..density..)) +
 	theme_bw() +
   theme(legend.position = "top")
 ```
+
+# Diagrama de cajas
+
+Base de datos
+
+```{r}
+antibodies <- read.delim(here_antibodies, header=T)
+
+str(antibodies)
+summary(antibodies$V.Nb.mutations)
+```
+
+-   Gráfico
+```{r}
+ggplot(antibodies, aes(y=V.Nb.mutations)) +
+  geom_boxplot()
+```
+-   Con muescas (notch)
+```{r}
+ggplot(antibodies, aes(y=V.Nb.mutations)) +
+  geom_boxplot(notch=T)
+```
+-   Cambiando de tema
+```{r}
+# Cambiar la apariencia
+ggplot(data=antibodies, aes(y= V.Nb.mutations, x= V.GENE)) +
+	geom_boxplot(notch= TRUE) +
+	theme_bw()
+```
+-   Segmentado por alguna condición
+```{r}
+ggplot(data=antibodies, aes(y= V.Nb.mutations, fill=V.GENE)) +
+	geom_boxplot()
+```
+-   Segmentado por alguna condición y añadiendo etiquetas en el eje horizontal
+```{r}
+ggplot(antibodies, aes(x=V.GENE, y=V.Nb.mutations, fill=V.GENE)) +
+  geom_boxplot(notch=T) +
+  theme_bw()
+```
+-   Cambiando colores
+```{r}
+ggplot(antibodies, aes(x=V.GENE, y=V.Nb.mutations, fill=V.GENE)) +
+  geom_boxplot(notch=T) +
+  scale_fill_manual(values=c("deepskyblue","seagreen2","salmon")) +
+  theme_bw()
+```
+-   Cambiando las etiquetas de los ejes
+```{r}
+ggplot(antibodies, aes(x=V.GENE, y=V.Nb.mutations, fill=V.GENE)) +
+  geom_boxplot(notch=T) +
+  scale_fill_manual(values=c("deepskyblue","seagreen2","salmon")) +
+  theme_bw() +
+  labs(title="Gráfico de cajas", y="VH mutations (nt)", x="", fill="")
+```
+# Gráfico de violín
+```{r}
+ggplot(data=antibodies, aes(y= V.Nb.mutations, x= V.GENE,  fill=V.GENE)) +
+	geom_violin() 
+```
+-   Con outliers
+```{r}
+ggplot(data=antibodies, aes(y= V.Nb.mutations, x= V.GENE,  fill=V.GENE)) +
+	geom_violin(Trim=F)
+```
+-   Sin leyenda
+```{r}
+ggplot(data=antibodies, aes(y= V.Nb.mutations, x= V.GENE,  fill=V.GENE)) +
+	geom_violin(show.legend = F, trim = F)
+```
+-   Añadir línea de tendencia con texto
+Línea de la media de `V.Nb.mutations`
+```{r}
+v_media <- mean(antibodies$V.Nb.mutations)
+```
+
+```{r}
+ggplot(antibodies, aes(y=V.Nb.mutations, x=V.GENE, fill=V.GENE)) +
+  geom_violin(show.legend = F, trim=F) +
+  geom_hline(yintercept = v_media, col="black", linetype="dashed") +
+  annotate("text", x=0.7, y=30, label="Mean", colour="black")
+```
+
+
