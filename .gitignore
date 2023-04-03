@@ -38,3 +38,7 @@ vignettes/*.pdf
 # Files and directories created by quarto
 *.html
 *_files/
+
+# Extra files
+figures/
+tipos_graficos.pdf
