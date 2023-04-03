@@ -21,12 +21,14 @@ lapply(paquetes, library, character.only = T)
 ### Configuración de rutas
 
 ```{r}
-here_figures <- c("figures")
+here_figures <- here("figures")
+here_antibodies <- here("rawdata", "antibodies.txt")
 ```
 
 # Gráfico de barras
 
-Base de datos
+-   Base de datos
+
 ```{r}
 cabbage_exp <- data.frame(Cultivar=c(rep("c39", 3), rep("c52", 3)), 
                           Date=rep(c("d16", "d20", "d21"),2), 
@@ -40,41 +42,52 @@ cabbage_exp <- data.frame(Cultivar=c(rep("c39", 3), rep("c52", 3)),
 str(cabbage_exp)
 cabbage_exp
 ```
-* Gráfico
+
+-   Gráfico
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight)) +
   geom_bar(stat="identity")
 ```
 
-* Cambio de color de las barras
+-   Cambio de color de las barras
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight)) +
   geom_bar(stat="identity", fill="plum")
 ```
-* Cambio de tema
+
+-   Cambio de tema
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight)) +
   geom_bar(stat="identity", fill="plum") +
   theme_bw()
 ```
-:::{.callout-note}
+
+::: callout-note
 [Galeria de extensiones de ggplot2](https://exts.ggplot2.tidyverse.org/gallery/) presenta extensiones para implementar temas en los gráficos generados por la librería ggplot2.
 :::
 
-* Gráfico de barras apiladas coloreadas por condición
+-   Gráfico de barras apiladas coloreadas por condición
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
   geom_bar(stat="identity") +
   theme_bw()
 ```
-* Añadir texto
+
+-   Añadir texto
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
   geom_bar(stat = "identity") +
   theme_bw() +
   geom_text(aes(label=Weight), vjust=0.4)
 ```
-* Gráfico con barras separadas por condición
+
+-   Gráfico con barras separadas por condición
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
   geom_bar(stat="identity", position = "dodge")
@@ -85,24 +98,29 @@ ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
   geom_bar(stat="identity", position = "dodge") +
   geom_text(aes(label=Weight), vjust=-0.1, position = position_dodge(0.9), size=3, colour="red")
 ```
-* Cambio de paleta de colores
 
-  + R tiene paletas de colores ya preestablecidas (ver presentación).
-  + `library(RcolorBrewer` se dedica exclusivamente a las paletas de colores.
-  
+-   Cambio de paleta de colores
+
+    -   R tiene paletas de colores ya preestablecidas (ver presentación).
+    -   `library(RcolorBrewer` se dedica exclusivamente a las paletas de colores.
+
 ```{r}
 ggplot(cabbage_exp, aes(Date, Weight, fill=Cultivar)) +
   geom_bar(stat="identity", position = "dodge") +
   scale_fill_brewer(palette = "Set1")
 ```
-* Añadir barras de error
+
+-   Añadir barras de error
+
 ```{r}
 ggplot(data= cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) + 
   geom_bar(stat="identity", position="dodge") +
   scale_fill_brewer(palette="Set1") +
   geom_errorbar(aes(ymin=Weight-se, ymax=Weight+se), width=0.2, position=position_dodge(0.9))
 ```
-* Cambiar títulos de los ejes
+
+-   Cambiar títulos de los ejes
+
 ```{r}
 ggplot(data= cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) + 
   geom_bar(stat="identity", position="dodge") +
@@ -110,10 +128,127 @@ ggplot(data= cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) +
   geom_errorbar(aes(ymin=Weight-se, ymax=Weight+se), width=0.2, position=position_dodge(0.9)) +
   labs(x="Day", y="Weight (lb)", fill="Experiment")
 ```
-* Guardar un gráfico
+
+-   Quitar leyenda
+```{r}
+ggplot(data=cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) +
+  geom_bar(stat="identity", position="dodge", show.legend = F)
+```
+-   Añadir texto
+```{r}
+ggplot(data=cabbage_exp, aes(x=Date, y=Weight, fill=Cultivar)) +
+  geom_bar(stat="identity", position="dodge", show.legend = F) +
+  annotate("text", x=1.5, y=2, label="Texto")
+```
+
+-   Guardar un gráfico
+
 ```{r}
 ggsave("figures/bar_graph.png", device = png)
 ```
 
+# Gráfico de dispersión
 
+Base de datos
 
+```{r}
+antibodies <- read.delim(here_antibodies, header=T)
+
+str(antibodies)
+```
+
+-   Gráfico
+
+```{r}
+ggplot(antibodies, aes(x=CDR3.length, y=VJ.identity)) +
+  geom_point()
+```
+
+-   Color por condición
+
+```{r}
+ggplot(antibodies, aes(x=CDR3.length, y=VJ.identity, colour=V.GENE)) +
+  geom_point()
+```
+
+-   Forma por condición
+
+```{r}
+ggplot(antibodies, aes(CDR3.length, VJ.identity, shape=V.GENE)) +
+  geom_point()
+```
+
+-   Forma y color por condición
+
+```{r}
+ggplot(antibodies, aes(CDR3.length, VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point()
+```
+
+-   Cambiar los valores de forma
+
+R tiene un código de números y símbolos que pueden cambiar la forma de los objetos que graficamos.
+
+![](images/image-1821593709.png)
+
+```{r}
+ggplot(antibodies, aes(CDR3.length, VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point() +
+  scale_shape_manual(values=c(1,2,3))
+```
+* Cambiar colores manualmente
+
+  + Con código HEX
+```{r}
+ggplot(antibodies, aes(CDR3.length, VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point() +
+  scale_shape_manual(values=c(1,2,3)) +
+  scale_colour_manual(values=c("#24761A", "#9B79D9", "#2468E6"))
+```
+  + Con nombre de color
+```{r}
+ggplot(data= antibodies, aes(x= CDR3.length, y= VJ.identity, shape=V.GENE, colour=V.GENE)) +
+	geom_point() +
+	scale_shape_manual(values=c(1,2,3)) +
+	scale_colour_manual(values=c("deepskyblue", "seagreen2", "salmon"))
+```
+* Cambiar tema
+```{r}
+ggplot(data= antibodies, aes(x= CDR3.length, y= VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point() +
+  scale_shape_manual(values=c(15,16,17)) +
+  scale_colour_manual(values=c("#24761A", "#9B79D9", "#2468E6")) +
+  theme_bw()
+```
+* Quitar leyenda
+```{r}
+ggplot(data= antibodies, aes(x= CDR3.length, y= VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point(show.legend=F) +
+  scale_shape_manual(values=c(15,16,17)) +
+  scale_colour_manual(values=c("#24761A", "#9B79D9", "#2468E6")) +
+  theme_bw()
+```
+* Agregar texto
+```{r}
+ggplot(data= antibodies, aes(x= CDR3.length, y= VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point(show.legend = F) +
+  scale_shape_manual(values=c(15,16,17)) +
+  scale_colour_manual(values=c("#24761A", "#9B79D9", "#2468E6")) +
+  annotate("text", x=75, y=85, label="IGHV1-69", colour="#24761A") +
+  annotate("text", x=35, y=88, label="IGHV2-5", colour="#9B79D9") +
+  theme_bw()
+```
+* Modificar ejes
+```{r}
+ggplot(data= antibodies, aes(x= CDR3.length, y= VJ.identity, shape=V.GENE, colour=V.GENE)) +
+  geom_point(show.legend = FALSE) +
+  scale_shape_manual(values=c(1,2,3)) +
+  scale_colour_manual(values=c("#24761A", "#9B79D9", "#2468E6")) +
+  annotate("text", x=75, y=85, label="IGHV1-69", colour="#24761A") +
+  annotate("text", x=35, y=88, label="IGHV2-5", colour="#9B79D9") +
+  annotate("text", x=60, y=82, label="IGHV3-73", colour="#2468E6") +
+  labs(x="CDR3 length (bp)", y= "VJ identity (%)", colour="")+
+  theme_bw()
+```
+
+  
